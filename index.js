@@ -1,21 +1,39 @@
 #!/usr/bin/env node
 const https = require('https');
+const http = require('http');
+
+function printHelp() {
+  console.log(`
+link-checker - Verifica links relativos problemáticos em HTML bruto
+
+Uso:
+  link-checker <URL>
+
+Exemplo:
+  link-checker https://www.seusite.com.br/
+  link-checker http://localhost:8080/
+
+Opções:
+  --help         Exibe esta mensagem
+`);
+}
+
+if (process.argv.includes('--help') || process.argv.length < 3) {
+  printHelp();
+  process.exit(0);
+}
 
 let url = process.argv[2];
-if (!url) {
-  console.error('Uso: link-checker-mcp <URL>');
-  process.exit(1);
-}
 
-// Garantir que a URL comece com https://www.
-if (!url.startsWith('https://')) {
-  url = 'https://' + url.replace(/^http:\/\//, '');
-}
-if (!url.match(/^https:\/\/www\./)) {
-  url = url.replace(/^https:\/\//, 'https://www.');
-}
+// Permitir http e https
+const client = url.startsWith('https://') ? https : http;
 
-https.get(url, res => {
+// Ignorar erro de certificado self-signed
+const options = {
+  rejectUnauthorized: false,
+};
+
+client.get(url, options, res => {
   let d = '';
   res.on('data', c => d += c);
   res.on('end', () => {

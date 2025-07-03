@@ -4,7 +4,7 @@
   "description": "MCP para checagem de links relativos problemáticos em HTML bruto.",
   "main": "index.js",
   "bin": {
-    "link-checker-mcp": "./index.js"
+    "link-checker": "./index.js"
   },
   "author": "Valter Tonon",
   "license": "MIT"
