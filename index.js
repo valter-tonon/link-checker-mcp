@@ -69,5 +69,5 @@ client.get(url, options, res => {
   });
 }).on('error', (e) => {
   console.error('Erro ao acessar a URL:', e.message);
-  process.exit(1);
+  process.exit(0);
 }); 
