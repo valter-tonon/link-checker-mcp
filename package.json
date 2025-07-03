@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "MCP para checagem de links relativos problemáticos em HTML bruto.",
   "main": "index.js",
-  "bin": {
-    "link-checker": "./index.js"
-  },
+  "bin": "./index.js",
+  "type": "commonjs",
   "author": "Valter Tonon",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "http": "^0.0.1-security",
+    "https": "^1.0.0"
+  }
 } 
