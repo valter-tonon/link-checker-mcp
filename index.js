@@ -18,7 +18,14 @@ Opções:
 `);
 }
 
-if (process.argv.includes('--help') || process.argv.length < 3) {
+// Corrigido: Mensagem amigável se não passar URL
+if (process.argv.includes('--help')) {
+  printHelp();
+  process.exit(0);
+}
+
+if (process.argv.length < 3) {
+  console.log('Erro: Nenhuma URL fornecida.\n');
   printHelp();
   process.exit(0);
 }
