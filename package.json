@@ -1,0 +1,11 @@
+{
+  "name": "link-checker-mcp",
+  "version": "1.0.0",
+  "description": "MCP para checagem de links relativos problemáticos em HTML bruto.",
+  "main": "index.js",
+  "bin": {
+    "link-checker-mcp": "./index.js"
+  },
+  "author": "Valter Tonon",
+  "license": "MIT"
+} 
