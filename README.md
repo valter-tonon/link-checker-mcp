@@ -1,46 +1,45 @@
-# link-checker-mcp
+# Link Checker MCP
 
 ## 🚀 O que é?
 
-O **link-checker-mcp** é uma ferramenta CLI (Command Line Interface) desenvolvida em Node.js para identificar rapidamente links problemáticos (relativos sem barra inicial) em páginas HTML. Esses links podem causar erros de navegação (404) em sites, especialmente quando usados em menus ou listas de categorias.
+O **link-checker-mcp** é um servidor MCP (Model Context Protocol) que analisa páginas HTML e identifica links relativos problemáticos que podem causar erros de navegação (404) em sites. É ideal para times de desenvolvimento, QA e manutenção de sites e e-commerces.
 
-- **Detecta links do tipo:** `href="baterias/c/233"` (e similares)
-- **Evita problemas de navegação inesperada** em sites dinâmicos ou com múltiplos níveis de URL
-- **Ideal para times de desenvolvimento, QA e manutenção de e-commerces**
+- **Detecta links problemáticos:** `href="baterias/c/233"` (relativos sem barra inicial)
+- **Evita problemas de navegação** em sites com múltiplos níveis de URL
+- **Integração nativa com Cursor IDE, Claude Desktop e outras ferramentas MCP**
 
 ---
 
 ## 🛠️ Como funciona?
 
-O script faz uma requisição HTTP para a URL informada, captura o HTML bruto (igual ao Ctrl+U do navegador) e busca por todos os atributos `href` que:
-- **Não começam com:** `/`, `http`, `https`, `#`, `mailto:`, `tel:`, `javascript:`
-- **Não estão vazios**
-
-O resultado é um relatório simples no terminal, listando todos os links problemáticos encontrados.
+O servidor MCP oferece uma tool `check-problematic-links` que:
+1. Faz uma requisição HTTP para a URL informada
+2. Captura o HTML bruto da página
+3. Analisa todos os atributos `href` encontrados
+4. Identifica links que não começam com: `/`, `http`, `https`, `#`, `mailto:`, `tel:`, `javascript:`
+5. Retorna um relatório detalhado com os problemas encontrados
 
 ---
 
-## 💻 Como usar
+## 📦 Instalação
 
-### 1. Via npx (sem instalar nada localmente)
-
-```sh
-npx github:valter-tonon/link-checker-mcp https://www.seusite.com.br/
+### Via NPM (recomendado)
+```bash
+npm install -g link-checker-mcp
 ```
 
-- Substitua a URL pelo endereço que deseja analisar.
-- O resultado será exibido no terminal.
-
-### 2. Como dependência local (opcional)
-
-```sh
+### Via repositório
+```bash
 git clone https://github.com/valter-tonon/link-checker-mcp.git
 cd link-checker-mcp
 npm install
-node index.js https://www.seusite.com.br/
 ```
 
-### 3. Integração com Cursor (MCP)
+---
+
+## 🔧 Configuração MCP
+
+### Para Cursor IDE
 
 Adicione ao seu `.cursor/mcp.json`:
 ```json
@@ -48,46 +47,174 @@ Adicione ao seu `.cursor/mcp.json`:
   "mcpServers": {
     "link-checker": {
       "command": "npx",
-      "args": [
-        "github:valter-tonon/link-checker-mcp",
-        "${input:url}"
-      ]
+      "args": ["link-checker-mcp@latest"]
     }
   }
 }
 ```
 
-- No Cursor, use o comando MCP: `link-checker` e informe a URL.
+### Para Claude Desktop
+
+Adicione ao seu `claude_desktop_config.json`:
+```json
+{
+  "mcpServers": {
+    "link-checker": {
+      "command": "npx",
+      "args": ["-y", "link-checker-mcp@latest"]
+    }
+  }
+}
+```
+
+### Para VS Code
+
+Adicione ao seu User Settings (JSON) ou `.vscode/mcp.json`:
+```json
+{
+  "mcp": {
+    "servers": {
+      "link-checker": {
+        "command": "npx",
+        "args": ["-y", "link-checker-mcp"]
+      }
+    }
+  }
+}
+```
+
+---
+
+## 🚀 Como usar
+
+### Via MCP (recomendado)
+
+1. Configure o servidor MCP conforme as instruções acima
+2. No seu editor (Cursor, Claude Desktop, etc.), use a tool:
+   - **Tool:** `check-problematic-links`
+   - **Parâmetro:** URL da página para analisar
+
+### Via linha de comando (modo standalone)
+```bash
+npx link-checker-mcp
+# O servidor ficará rodando aguardando comandos MCP via stdin/stdout
+```
+
+---
+
+## 📋 Funcionalidades MCP
+
+### Tools disponíveis:
+
+#### `check-problematic-links`
+- **Descrição:** Analisa uma página HTML e encontra links relativos problemáticos
+- **Parâmetros:**
+  - `url` (string): URL da página para analisar (deve incluir http:// ou https://)
+- **Retorna:** Relatório detalhado com links problemáticos encontrados
+
+### Resources disponíveis:
+
+#### `link-checker://docs`
+- **Descrição:** Documentação completa sobre como usar o verificador de links
+- **Formato:** Markdown
+- **Conteúdo:** Explicações detalhadas, exemplos e soluções recomendadas
 
 ---
 
 ## 📋 Exemplo de saída
 
+### ✅ Quando não há problemas:
 ```
-Links problemáticos encontrados:
-baterias/c/233
-acessorios/c/146
-...
+✅ Análise da URL: https://exemplo.com
+
+Nenhum link problemático encontrado!
+
+A página está livre de links relativos que poderiam causar erros de navegação.
 ```
 
-Se não houver links problemáticos:
+### ⚠️ Quando há problemas:
 ```
-Nenhum link problemático encontrado!
+⚠️ Análise da URL: https://exemplo.com
+
+🔍 Links problemáticos encontrados (3):
+
+  • baterias/c/233
+  • acessorios/c/146
+  • categoria/produtos
+
+💡 Estes links são relativos e podem causar erros 404 dependendo da URL atual. 
+Considere adicionar '/' no início ou usar URLs absolutas.
 ```
+
+---
+
+## 🛡️ Tratamento de erros
+
+O servidor MCP trata adequadamente:
+- URLs inacessíveis ou inválidas
+- Problemas de conectividade
+- Certificados SSL auto-assinados
+- Timeouts de conexão
+
+Todas as mensagens de erro são informativas e incluem sugestões de solução.
 
 ---
 
 ## 📝 Detalhes técnicos
-- Node.js puro, sem dependências externas
-- Pode ser executado em qualquer ambiente com Node.js >= 12
-- Código aberto e fácil de adaptar para outros padrões de links
+
+- **Linguagem:** Node.js (ES Modules)
+- **Protocolo:** Model Context Protocol (MCP)
+- **Dependências:** 
+  - `@modelcontextprotocol/sdk` - SDK oficial do MCP
+  - `zod` - Validação de schema
+- **Compatibilidade:** Node.js >= 18
+- **Transport:** Stdio (padrão MCP)
+
+---
+
+## 🔄 Desenvolvimento
+
+### Executar localmente:
+```bash
+git clone https://github.com/valter-tonon/link-checker-mcp.git
+cd link-checker-mcp
+npm install
+node index.js
+```
+
+### Testar com MCP Inspector:
+```bash
+npx @modelcontextprotocol/inspector node index.js
+```
+
+---
+
+## 🤝 Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
 
 ---
 
 ## 🧑‍💻 Autor
-Valter Tonon
+
+**Valter Tonon**
+- GitHub: [@valter-tonon](https://github.com/valter-tonon)
 
 ---
 
 ## 📄 Licença
-MIT 
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
+
+---
+
+## 📚 Links úteis
+
+- [Model Context Protocol](https://modelcontextprotocol.io/)
+- [MCP SDK TypeScript](https://github.com/modelcontextprotocol/typescript-sdk)
+- [Cursor IDE](https://cursor.com/)
+- [Claude Desktop](https://claude.ai/) 
